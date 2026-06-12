@@ -3,6 +3,10 @@ project(miniaudio C)
 
 add_library(miniaudio STATIC miniaudio.c)
 
+if(IOS OR (CMAKE_SYSTEM_NAME STREQUAL "iOS"))
+    set_source_files_properties(miniaudio.c PROPERTIES COMPILE_FLAGS "-x objective-c")
+endif()
+
 target_include_directories(miniaudio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(Threads REQUIRED)

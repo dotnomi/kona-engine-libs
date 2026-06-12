@@ -68,10 +68,14 @@ jobs:
       - name: Install Linux Dependencies (Ubuntu Host)
         if: runner.os == 'Linux' && (matrix.target == 'linux-x64' || matrix.target == 'linux-arm64' || matrix.target == 'webgl' || matrix.target == 'android')
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev ninja-build
           if [ "${{ matrix.target }}" = "linux-arm64" ]; then
-            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+            sudo dpkg --add-architecture arm64
+            sudo apt-get update
+            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build
+            sudo apt-get install -y libx11-dev:arm64 libxrandr-dev:arm64 libxinerama-dev:arm64 libxcursor-dev:arm64 libxi-dev:arm64 libgl1-mesa-dev:arm64 libglu1-mesa-dev:arm64 libasound2-dev:arm64 libpulse-dev:arm64
+          else
+            sudo apt-get update
+            sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev ninja-build
           fi
 
       - name: Set up Emscripten (WebGL Target)

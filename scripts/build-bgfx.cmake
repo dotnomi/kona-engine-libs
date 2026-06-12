@@ -66,12 +66,14 @@ elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
 elseif(TARGET_PLATFORM STREQUAL "webgl")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+        "-DCMAKE_C_FLAGS=-msimd128"
+        "-DCMAKE_CXX_FLAGS=-msimd128"
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_LATEST_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
-        "-DANDROID_PLATFORM=android-21"
+        "-DANDROID_PLATFORM=android-24"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios")
     list(APPEND CMAKE_ARGS
