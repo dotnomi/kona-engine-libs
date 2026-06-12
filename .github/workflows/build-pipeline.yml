@@ -17,44 +17,46 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: windows-x64
-            runner: windows-latest
-            triplet: x64-windows-static
-          - target: windows-arm64
-            runner: windows-latest
-            triplet: arm64-windows-static
-          - target: macos-x64
-            runner: macos-latest
-            triplet: x64-osx-static
-          - target: macos-arm64
-            runner: macos-latest
-            triplet: arm64-osx-static
-          - target: linux-x64
-            runner: ubuntu-latest
-            triplet: x64-linux-static
+#          - target: windows-x64
+#            runner: windows-latest
+#            triplet: x64-windows-static
+#          - target: windows-arm64
+#            runner: windows-latest
+#            triplet: arm64-windows-static
+#          - target: macos-x64
+#            runner: macos-latest
+#            triplet: x64-osx-static
+#          - target: macos-arm64
+#            runner: macos-latest
+#            triplet: arm64-osx-static
+#          - target: linux-x64
+#            runner: ubuntu-latest
+#            triplet: x64-linux-static
           - target: linux-arm64
             runner: ubuntu-latest
             triplet: arm64-linux-static
           - target: webgl
             runner: ubuntu-latest
             triplet: wasm32-emscripten
+            emcc_flags: "-pthread -msimd128"
           - target: android
             runner: ubuntu-latest
             triplet: arm64-android
-          - target: ios
-            runner: macos-latest
-            triplet: arm64-ios
+#          - target: ios
+#            runner: macos-latest
+#            triplet: arm64-ios
 
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
       VCPKG_OVERLAY_TRIPLETS: ${{ github.workspace }}/custom-triplets
+      EMCC_CFLAGS: ${{ matrix.emcc_flags || '' }}
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache External Sources and Build Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             external
@@ -70,6 +72,17 @@ jobs:
         run: |
           if [ "${{ matrix.target }}" = "linux-arm64" ]; then
             sudo dpkg --add-architecture arm64
+            if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then
+              sudo sed -i '/^URIs: http/i Architectures: amd64' /etc/apt/sources.list.d/ubuntu.sources
+            fi
+            if [ -f /etc/apt/sources.list ] && [ -s /etc/apt/sources.list ]; then
+              sudo sed -i 's/^deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
+              sudo sed -i 's/^deb-src http/deb-src [arch=amd64] http/g' /etc/apt/sources.list
+            fi
+            CODENAME=$(lsb_release -sc)
+            sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${CODENAME} main restricted universe multiverse' > /etc/apt/sources.list.d/arm64-ports.list"
+            sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${CODENAME}-updates main restricted universe multiverse' >> /etc/apt/sources.list.d/arm64-ports.list"
+            sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${CODENAME}-security main restricted universe multiverse' >> /etc/apt/sources.list.d/arm64-ports.list"
             sudo apt-get update
             sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build
             sudo apt-get install -y libx11-dev:arm64 libxrandr-dev:arm64 libxinerama-dev:arm64 libxcursor-dev:arm64 libxi-dev:arm64 libgl1-mesa-dev:arm64 libglu1-mesa-dev:arm64 libasound2-dev:arm64 libpulse-dev:arm64
@@ -80,14 +93,14 @@ jobs:
 
       - name: Set up Emscripten (WebGL Target)
         if: matrix.target == 'webgl'
-        uses: mymindstorm/setup-emsdk@v14
+        uses: mymindstorm/setup-emsdk@v16
         with:
           version: 3.1.53
           actions-cache-folder: 'emsdk-cache'
 
       - name: Set up Android NDK (Android Target)
         if: matrix.target == 'android'
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Configure Xcode (macOS & iOS Targets)
         if: runner.os == 'macOS'
@@ -111,7 +124,7 @@ jobs:
         run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-miniaudio.cmake
 
       - name: Upload Platform Build Output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-out-${{ matrix.target }}
           path: build-out/${{ matrix.target }}
@@ -123,10 +136,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download All Platform Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: build-out
 
@@ -137,7 +150,7 @@ jobs:
         run: cat nativeLibs/manifest.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Unified nativeLibs.zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nativeLibs-release
           path: nativeLibs.zip

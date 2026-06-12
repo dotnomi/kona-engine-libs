@@ -66,8 +66,9 @@ elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
 elseif(TARGET_PLATFORM STREQUAL "webgl")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
-        "-DCMAKE_C_FLAGS=-msimd128"
-        "-DCMAKE_CXX_FLAGS=-msimd128"
+        "-DCMAKE_C_FLAGS=-msimd128 -pthread"
+        "-DCMAKE_CXX_FLAGS=-msimd128 -pthread"
+        "-DCMAKE_EXE_LINKER_FLAGS=-pthread"
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
