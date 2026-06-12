@@ -51,7 +51,8 @@ elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_LATEST_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
-        "-DANDROID_PLATFORM=android-24"
+        "-DANDROID_PLATFORM=24"
+        "-DANDROID_NATIVE_API_LEVEL=24"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios")
     list(APPEND CMAKE_ARGS

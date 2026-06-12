@@ -64,6 +64,9 @@ elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
         "-DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++"
     )
 elseif(TARGET_PLATFORM STREQUAL "webgl")
+    set(ENV{CFLAGS} "-msimd128 -pthread")
+    set(ENV{CXXFLAGS} "-msimd128 -pthread")
+    set(ENV{LDFLAGS} "-pthread")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
         "-DCMAKE_C_FLAGS=-msimd128 -pthread"
@@ -74,7 +77,8 @@ elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_LATEST_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
-        "-DANDROID_PLATFORM=android-24"
+        "-DANDROID_PLATFORM=24"
+        "-DANDROID_NATIVE_API_LEVEL=24"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios")
     list(APPEND CMAKE_ARGS
