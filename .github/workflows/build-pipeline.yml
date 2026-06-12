@@ -1,0 +1,137 @@
+name: KoNa Engine Native Libraries Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: windows-x64
+            runner: windows-latest
+            triplet: x64-windows-static
+          - target: windows-arm64
+            runner: windows-latest
+            triplet: arm64-windows-static
+          - target: macos-x64
+            runner: macos-latest
+            triplet: x64-osx-static
+          - target: macos-arm64
+            runner: macos-latest
+            triplet: arm64-osx-static
+          - target: linux-x64
+            runner: ubuntu-latest
+            triplet: x64-linux-static
+          - target: linux-arm64
+            runner: ubuntu-latest
+            triplet: arm64-linux-static
+          - target: webgl
+            runner: ubuntu-latest
+            triplet: wasm32-emscripten
+          - target: android
+            runner: ubuntu-latest
+            triplet: arm64-android
+          - target: ios
+            runner: macos-latest
+            triplet: arm64-ios
+
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+      VCPKG_OVERLAY_TRIPLETS: ${{ github.workspace }}/custom-triplets
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Cache External Sources and Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            external
+            ~/.vcpkg
+            ${{ github.workspace }}/vcpkg/downloads
+            ${{ github.workspace }}/vcpkg/installed
+          key: native-deps-${{ matrix.target }}-${{ hashFiles('scripts/build-*.cmake', 'custom-triplets/*.cmake') }}
+          restore-keys: |
+            native-deps-${{ matrix.target }}-
+
+      - name: Install Linux Dependencies (Ubuntu Host)
+        if: runner.os == 'Linux' && (matrix.target == 'linux-x64' || matrix.target == 'linux-arm64' || matrix.target == 'webgl' || matrix.target == 'android')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev ninja-build
+          if [ "${{ matrix.target }}" = "linux-arm64" ]; then
+            sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          fi
+
+      - name: Set up Emscripten (WebGL Target)
+        if: matrix.target == 'webgl'
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.53
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Set up Android NDK (Android Target)
+        if: matrix.target == 'android'
+        uses: android-actions/setup-android@v3
+
+      - name: Configure Xcode (macOS & iOS Targets)
+        if: runner.os == 'macOS'
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -showsdks
+
+      - name: Run Build SDL2
+        run: cmake -P scripts/build-sdl2.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+
+      - name: Run Build bgfx
+        run: cmake -P scripts/build-bgfx.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+
+      - name: Run Build Jolt Physics
+        run: cmake -P scripts/build-jolt.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+
+      - name: Run Build Box2D
+        run: cmake -P scripts/build-box2d.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+
+      - name: Run Build miniaudio
+        run: cmake -P scripts/build-miniaudio.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+
+      - name: Upload Platform Build Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-out-${{ matrix.target }}
+          path: build-out/${{ matrix.target }}
+          retention-days: 1
+
+  package:
+    name: Package Artifacts
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download All Platform Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-out
+
+      - name: Run Packaging Script
+        run: cmake -P scripts/package-artifacts.cmake
+
+      - name: Upload Unified nativeLibs.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: nativeLibs-release
+          path: nativeLibs.zip
+          retention-days: 30

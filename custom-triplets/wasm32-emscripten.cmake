@@ -1,0 +1,7 @@
+set(VCPKG_TARGET_ARCHITECTURE wasm32)
+set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
+set(VCPKG_CMAKE_SYSTEM_NAME Emscripten)
+if(DEFINED ENV{EMSDK})
+  set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
+endif()
