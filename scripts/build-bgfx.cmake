@@ -12,24 +12,30 @@ endif()
 set(EXT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external")
 file(MAKE_DIRECTORY ${EXT_DIR})
 
-# Clone bx, bimg, bgfx in parallel
-set(LIBS bx bimg bgfx)
-foreach(LIB ${LIBS})
-    set(SRC_DIR "${EXT_DIR}/${LIB}")
-    if(NOT EXISTS "${SRC_DIR}")
-        message(STATUS "Cloning ${LIB}...")
-        execute_process(
-            COMMAND git clone --depth 1 https://github.com/bkaradzic/${LIB}.git ${SRC_DIR}
-            RESULT_VARIABLE GIT_RESULT
-        )
-        if(NOT GIT_RESULT EQUAL 0)
-            message(FATAL_ERROR "Failed to clone ${LIB}")
-        endif()
-    endif()
-endforeach()
-
 set(SRC_DIR "${EXT_DIR}/bgfx")
 set(BUILD_DIR "${EXT_DIR}/bgfx-build")
+
+# Clone bgfx.cmake wrapper repository
+if(NOT EXISTS "${SRC_DIR}")
+    message(STATUS "Cloning bgfx.cmake...")
+    execute_process(
+        COMMAND git clone --depth 1 https://github.com/bkaradzic/bgfx.cmake.git ${SRC_DIR}
+        RESULT_VARIABLE GIT_RESULT
+    )
+    if(NOT GIT_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to clone bgfx.cmake")
+    endif()
+
+    message(STATUS "Initializing submodules for bgfx.cmake...")
+    execute_process(
+        COMMAND git submodule update --init --recursive
+        WORKING_DIRECTORY "${SRC_DIR}"
+        RESULT_VARIABLE SUB_RESULT
+    )
+    if(NOT SUB_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to update submodules for bgfx.cmake")
+    endif()
+endif()
 
 # Setup CMake args
 set(CMAKE_ARGS
