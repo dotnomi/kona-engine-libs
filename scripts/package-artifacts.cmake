@@ -90,6 +90,20 @@ foreach(PLATFORM ${TARGETS})
         message(WARNING "No build directory found for platform ${PLATFORM} at ${PLAT_OUT}")
     endif()
 endforeach()
+# 2.5 Generate library manifest summary
+set(MANIFEST_FILE "${STAGE_DIR}/manifest.md")
+message(STATUS "Generating library manifest at ${MANIFEST_FILE}...")
+file(WRITE ${MANIFEST_FILE}
+    "### KoNa Engine Native Libraries Manifest\n\n"
+    "This package contains the pre-compiled static native libraries for the KoNa Engine.\n\n"
+    "| Library | Version / Git Tag | Build Linkage | Description |\n"
+    "|---|---|---|---|\n"
+    "| SDL2 | release-2.30.3 | Static | Simple DirectMedia Layer |\n"
+    "| bgfx | latest (bgfx.cmake) | Static | Graphics rendering library |\n"
+    "| Jolt Physics | v5.0.0 | Static | 3D Physics engine |\n"
+    "| Box2D | v2.4.1 | Static | 2D Physics engine |\n"
+    "| miniaudio | latest (master) | Static | Single-header audio library |\n"
+)
 
 # 3. Create nativeLibs.zip archive
 message(STATUS "Compressing nativeLibs directory into nativeLibs.zip...")
