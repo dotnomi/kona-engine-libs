@@ -17,33 +17,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: windows-x64
-            runner: windows-latest
-            triplet: x64-windows-static
-          - target: windows-arm64
-            runner: windows-latest
-            triplet: arm64-windows-static
-          - target: macos-x64
-            runner: macos-latest
-            triplet: x64-osx-static
-          - target: macos-arm64
-            runner: macos-latest
-            triplet: arm64-osx-static
+#          - target: windows-x64
+#            runner: windows-latest
+#            triplet: x64-windows-static
+#          - target: windows-arm64
+#            runner: windows-latest
+#            triplet: arm64-windows-static
+#          - target: macos-x64
+#            runner: macos-latest
+#            triplet: x64-osx-static
+#          - target: macos-arm64
+#            runner: macos-latest
+#            triplet: arm64-osx-static
           - target: linux-x64
             runner: ubuntu-latest
             triplet: x64-linux-static
-          - target: linux-arm64
-            runner: ubuntu-latest
-            triplet: arm64-linux-static
-          - target: webgl
-            runner: ubuntu-latest
-            triplet: wasm32-emscripten
-          - target: android
-            runner: ubuntu-latest
-            triplet: arm64-android
-          - target: ios
-            runner: macos-latest
-            triplet: arm64-ios
+#          - target: linux-arm64
+#            runner: ubuntu-latest
+#            triplet: arm64-linux-static
+#          - target: webgl
+#            runner: ubuntu-latest
+#            triplet: wasm32-emscripten
+#          - target: android
+#            runner: ubuntu-latest
+#            triplet: arm64-android
+#          - target: ios
+#            runner: macos-latest
+#            triplet: arm64-ios
 
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
@@ -92,19 +92,19 @@ jobs:
           xcodebuild -showsdks
 
       - name: Run Build SDL2
-        run: cmake -P scripts/build-sdl2.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-sdl2.cmake
 
       - name: Run Build bgfx
-        run: cmake -P scripts/build-bgfx.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-bgfx.cmake
 
       - name: Run Build Jolt Physics
-        run: cmake -P scripts/build-jolt.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-jolt.cmake
 
       - name: Run Build Box2D
-        run: cmake -P scripts/build-box2d.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-box2d.cmake
 
       - name: Run Build miniaudio
-        run: cmake -P scripts/build-miniaudio.cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }}
+        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-miniaudio.cmake
 
       - name: Upload Platform Build Output
         uses: actions/upload-artifact@v4
