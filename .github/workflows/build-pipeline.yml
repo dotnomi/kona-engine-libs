@@ -32,9 +32,9 @@ jobs:
 #          - target: linux-x64
 #            runner: ubuntu-latest
 #            triplet: x64-linux-static
-          - target: linux-arm64
-            runner: ubuntu-latest
-            triplet: arm64-linux-static
+#          - target: linux-arm64
+#            runner: ubuntu-latest
+#            triplet: arm64-linux-static
           - target: webgl
             runner: ubuntu-latest
             triplet: wasm32-emscripten
@@ -100,7 +100,9 @@ jobs:
 
       - name: Set up Android NDK (Android Target)
         if: matrix.target == 'android'
-        uses: android-actions/setup-android@v4
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
 
       - name: Configure Xcode (macOS & iOS Targets)
         if: runner.os == 'macOS'

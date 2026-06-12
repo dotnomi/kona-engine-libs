@@ -28,7 +28,9 @@ if(NOT EXISTS "${SRC_DIR}")
 
     if(TARGET_PLATFORM STREQUAL "webgl")
         message(STATUS "Patching bgfx.cmake for WebGL pthreads...")
-        file(APPEND "${SRC_DIR}/CMakeLists.txt" "\nadd_compile_options(-pthread -s USE_PTHREADS=1)\nadd_link_options(-pthread -s USE_PTHREADS=1)\n")
+        file(READ "${SRC_DIR}/CMakeLists.txt" CMAKE_CONTENT)
+        string(REPLACE "project(bgfx)" "project(bgfx)\nadd_compile_options(-pthread -s USE_PTHREADS=1)\nadd_link_options(-pthread -s USE_PTHREADS=1)" CMAKE_CONTENT "${CMAKE_CONTENT}")
+        file(WRITE "${SRC_DIR}/CMakeLists.txt" "${CMAKE_CONTENT}")
     endif()
 
     message(STATUS "Initializing submodules for bgfx.cmake...")
