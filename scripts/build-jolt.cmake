@@ -48,6 +48,8 @@ elseif(TARGET_PLATFORM STREQUAL "linux-x64")
     # Default host config
 elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
     list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=Linux"
+        "-DCMAKE_SYSTEM_PROCESSOR=aarch64"
         "-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc"
         "-DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++"
     )
@@ -57,7 +59,7 @@ elseif(TARGET_PLATFORM STREQUAL "webgl")
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
-        "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_LATEST_HOME}/build/cmake/android.toolchain.cmake"
+        "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
         "-DANDROID_PLATFORM=24"
         "-DANDROID_NATIVE_API_LEVEL=24"
