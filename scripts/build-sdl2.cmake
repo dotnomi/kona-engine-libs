@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 
 set(LIB_NAME sdl2)
 set(GIT_URL "https://github.com/libsdl-org/SDL.git")
-set(GIT_TAG "release-2.30.3")
+set(GIT_TAG "release-2.30.12")
 
 if(NOT DEFINED TARGET_PLATFORM)
     message(FATAL_ERROR "TARGET_PLATFORM not defined (e.g., windows-x64, android, etc.)")

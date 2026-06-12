@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 
 set(LIB_NAME jolt)
 set(GIT_URL "https://github.com/jrouwe/JoltPhysics.git")
-set(GIT_TAG "v5.0.0")
+set(GIT_TAG "v5.5.0")
 
 if(NOT DEFINED TARGET_PLATFORM)
     message(FATAL_ERROR "TARGET_PLATFORM not defined")

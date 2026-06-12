@@ -26,6 +26,11 @@ if(NOT EXISTS "${SRC_DIR}")
         message(FATAL_ERROR "Failed to clone bgfx.cmake")
     endif()
 
+    if(TARGET_PLATFORM STREQUAL "webgl")
+        message(STATUS "Patching bgfx.cmake for WebGL pthreads...")
+        file(APPEND "${SRC_DIR}/CMakeLists.txt" "\nadd_compile_options(-pthread -s USE_PTHREADS=1)\nadd_link_options(-pthread -s USE_PTHREADS=1)\n")
+    endif()
+
     message(STATUS "Initializing submodules for bgfx.cmake...")
     execute_process(
         COMMAND git submodule update --init --recursive
