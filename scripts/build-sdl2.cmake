@@ -59,6 +59,8 @@ elseif(TARGET_PLATFORM STREQUAL "webgl")
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=Android"
+        "-DCMAKE_SYSTEM_VERSION=26"
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_LATEST_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
         "-DANDROID_PLATFORM=android-26"
