@@ -74,12 +74,22 @@ elseif(TARGET_PLATFORM STREQUAL "ios")
         "-DCMAKE_SYSTEM_NAME=iOS"
         "-DCMAKE_OSX_ARCHITECTURES=arm64"
         "-DCMAKE_OSX_SYSROOT=iphoneos"
+        "-DSDL_MMX=OFF"
+        "-DSDL_SSE=OFF"
+        "-DSDL_SSE2=OFF"
+        "-DSDL_SSE3=OFF"
+        "-DSDL_SSEMATH=OFF"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios-simulator-arm64")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_SYSTEM_NAME=iOS"
         "-DCMAKE_OSX_ARCHITECTURES=arm64"
         "-DCMAKE_OSX_SYSROOT=iphonesimulator"
+        "-DSDL_MMX=OFF"
+        "-DSDL_SSE=OFF"
+        "-DSDL_SSE2=OFF"
+        "-DSDL_SSE3=OFF"
+        "-DSDL_SSEMATH=OFF"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios-x64")
     list(APPEND CMAKE_ARGS
