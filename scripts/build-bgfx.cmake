@@ -26,12 +26,7 @@ if(NOT EXISTS "${SRC_DIR}")
         message(FATAL_ERROR "Failed to clone bgfx.cmake")
     endif()
 
-    if(TARGET_PLATFORM STREQUAL "webgl")
-        message(STATUS "Patching bgfx.cmake for WebGL pthreads...")
-        file(READ "${SRC_DIR}/CMakeLists.txt" CMAKE_CONTENT)
-        string(REPLACE "project(bgfx)" "project(bgfx)\nadd_compile_options(-pthread -s USE_PTHREADS=1)\nadd_link_options(-pthread -s USE_PTHREADS=1)" CMAKE_CONTENT "${CMAKE_CONTENT}")
-        file(WRITE "${SRC_DIR}/CMakeLists.txt" "${CMAKE_CONTENT}")
-    endif()
+
 
     message(STATUS "Initializing submodules for bgfx.cmake...")
     execute_process(
@@ -73,15 +68,15 @@ elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
         "-DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++"
     )
 elseif(TARGET_PLATFORM STREQUAL "webgl")
-    set(ENV{CFLAGS} "-msimd128 -pthread")
-    set(ENV{CXXFLAGS} "-msimd128 -pthread")
-    set(ENV{LDFLAGS} "-pthread")
+    set(ENV{CFLAGS} "-msimd128")
+    set(ENV{CXXFLAGS} "-msimd128")
+    set(ENV{LDFLAGS} "")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
-        "-DCMAKE_C_FLAGS=-msimd128 -pthread -s USE_PTHREADS=1"
-        "-DCMAKE_CXX_FLAGS=-msimd128 -pthread -s USE_PTHREADS=1"
-        "-DCMAKE_EXE_LINKER_FLAGS=-pthread -s USE_PTHREADS=1"
-        "-DBGFX_CONFIG_MULTITHREADED=ON"
+        "-DCMAKE_C_FLAGS=-msimd128"
+        "-DCMAKE_CXX_FLAGS=-msimd128"
+        "-DCMAKE_EXE_LINKER_FLAGS="
+        "-DBGFX_CONFIG_MULTITHREADED=OFF"
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS

@@ -39,9 +39,9 @@ jobs:
             runner: ubuntu-latest
             triplet: wasm32-emscripten
             emcc_flags: "-pthread -msimd128"
-          - target: android
-            runner: ubuntu-latest
-            triplet: arm64-android
+#          - target: android
+#            runner: ubuntu-latest
+#            triplet: arm64-android
 #          - target: ios
 #            runner: macos-latest
 #            triplet: arm64-ios
