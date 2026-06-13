@@ -27,6 +27,20 @@ if(NOT EXISTS "${SRC_DIR}")
         message(FATAL_ERROR "Failed to clone ${LIB_NAME}")
     endif()
 endif()
+# Patch allocate.c for Android API < 28 compatibility
+set(ALLOCATE_C "${SRC_DIR}/src/allocate.c")
+if(EXISTS "${ALLOCATE_C}")
+    file(READ "${ALLOCATE_C}" ALLOC_CONTENT)
+    string(REPLACE 
+        "void* ptr = aligned_alloc( B2_ALIGNMENT, size32 );" 
+        "#if defined(__ANDROID__)\n\tvoid* ptr = memalign( B2_ALIGNMENT, size32 );\n#else\n\tvoid* ptr = aligned_alloc( B2_ALIGNMENT, size32 );\n#endif" 
+        ALLOC_CONTENT "${ALLOC_CONTENT}")
+    string(REPLACE
+        "#include <stdlib.h>"
+        "#include <stdlib.h>\n#if defined(__ANDROID__)\n#include <malloc.h>\n#endif"
+        ALLOC_CONTENT "${ALLOC_CONTENT}")
+    file(WRITE "${ALLOCATE_C}" "${ALLOC_CONTENT}")
+endif()
 
 set(CMAKE_ARGS
     "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
