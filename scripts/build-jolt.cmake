@@ -16,6 +16,12 @@ endif()
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/${LIB_NAME}")
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/${LIB_NAME}-build")
 
+# Force clean clone to ensure correct tag
+if(EXISTS "${SRC_DIR}")
+    message(STATUS "Removing cached ${LIB_NAME} to ensure correct tag ${GIT_TAG}...")
+    file(REMOVE_RECURSE "${SRC_DIR}")
+endif()
+
 # Clone repository
 if(NOT EXISTS "${SRC_DIR}")
     message(STATUS "Cloning ${LIB_NAME}...")
@@ -28,8 +34,13 @@ if(NOT EXISTS "${SRC_DIR}")
     endif()
 endif()
 
-# Clone JoltC repository
+# Force clean clone of JoltC as well
 set(JOLTC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/joltc")
+if(EXISTS "${JOLTC_DIR}")
+    message(STATUS "Removing cached JoltC to ensure latest master...")
+    file(REMOVE_RECURSE "${JOLTC_DIR}")
+endif()
+
 if(NOT EXISTS "${JOLTC_DIR}")
     message(STATUS "Cloning JoltC...")
     execute_process(
