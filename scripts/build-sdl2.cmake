@@ -63,11 +63,11 @@ elseif(TARGET_PLATFORM STREQUAL "webgl")
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_SYSTEM_NAME=Android"
-        "-DCMAKE_SYSTEM_VERSION=26"
+        "-DCMAKE_SYSTEM_VERSION=24"
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake"
         "-DANDROID_ABI=arm64-v8a"
-        "-DANDROID_PLATFORM=android-26"
-        "-DANDROID_NATIVE_API_LEVEL=26"
+        "-DANDROID_PLATFORM=android-24"
+        "-DANDROID_NATIVE_API_LEVEL=24"
     )
 elseif(TARGET_PLATFORM STREQUAL "ios")
     list(APPEND CMAKE_ARGS
