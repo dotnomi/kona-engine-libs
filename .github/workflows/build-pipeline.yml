@@ -113,8 +113,8 @@ jobs:
 #      - name: Run Build SDL2
 #        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-sdl2.cmake
 
-      - name: Run Build bgfx
-        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-bgfx.cmake
+#      - name: Run Build bgfx
+#        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-bgfx.cmake
 
       - name: Run Build Jolt Physics
         run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-jolt.cmake

@@ -58,6 +58,16 @@ elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
 elseif(TARGET_PLATFORM STREQUAL "webgl")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+        "-DUSE_SSE4_1=OFF"
+        "-DUSE_SSE4_2=OFF"
+        "-DUSE_AVX=OFF"
+        "-DUSE_AVX2=OFF"
+        "-DUSE_AVX512=OFF"
+        "-DUSE_LZCNT=OFF"
+        "-DUSE_TZCNT=OFF"
+        "-DUSE_F16C=OFF"
+        "-DUSE_FMADD=OFF"
+        "-DUSE_WASM_SIMD=ON"
     )
 elseif(TARGET_PLATFORM STREQUAL "android")
     list(APPEND CMAKE_ARGS
