@@ -106,10 +106,10 @@ file(WRITE ${MANIFEST_FILE}
     "This package contains the pre-compiled static native libraries for the KoNa Engine.\n\n"
     "| Library | Version / Git Tag | Build Linkage | Description |\n"
     "|---|---|---|---|\n"
-    "| SDL2 | release-2.30.3 | Static | Simple DirectMedia Layer |\n"
+    "| SDL2 | release-2.30.12 | Static | Simple DirectMedia Layer |\n"
     "| bgfx | latest (bgfx.cmake) | Static | Graphics rendering library |\n"
-    "| Jolt Physics | v5.0.0 | Static | 3D Physics engine |\n"
-    "| Box2D | v2.4.1 | Static | 2D Physics engine |\n"
+    "| Jolt Physics | v5.5.0 | Static | 3D Physics engine |\n"
+    "| Box2D | v3.0.0 | Static | 2D Physics engine |\n"
     "| miniaudio | latest (master) | Static | Single-header audio library |\n"
 )
 

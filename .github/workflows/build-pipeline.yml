@@ -73,6 +73,12 @@ jobs:
           restore-keys: |
             native-deps-${{ matrix.target }}-
 
+      - name: Setup MinGW for Windows
+        if: runner.os == 'Windows'
+        run: |
+          echo "C:\msys64\mingw64\bin" >> $env:GITHUB_PATH
+          echo "C:\msys64\usr\bin" >> $env:GITHUB_PATH
+
       - name: Install Linux Dependencies (Ubuntu Host)
         if: runner.os == 'Linux' && (matrix.target == 'linux-x64' || matrix.target == 'linux-arm64' || matrix.target == 'webgl' || matrix.target == 'android')
         run: |
