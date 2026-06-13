@@ -25,9 +25,12 @@ if(NOT EXISTS "${SRC_DIR}")
     if(NOT GIT_RESULT EQUAL 0)
         message(FATAL_ERROR "Failed to clone bgfx.cmake")
     endif()
-
-
-
+    if(TARGET_PLATFORM STREQUAL "webgl")
+        message(STATUS "Patching bx.cmake to remove -msse4.2 for WebGL...")
+        file(READ "${SRC_DIR}/cmake/bx/bx.cmake" BX_CMAKE_CONTENT)
+        string(REPLACE "-msse4.2" "" BX_CMAKE_CONTENT "${BX_CMAKE_CONTENT}")
+        file(WRITE "${SRC_DIR}/cmake/bx/bx.cmake" "${BX_CMAKE_CONTENT}")
+    endif()
     message(STATUS "Initializing submodules for bgfx.cmake...")
     execute_process(
         COMMAND git submodule update --init --recursive
