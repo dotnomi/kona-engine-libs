@@ -73,8 +73,8 @@ elseif(TARGET_PLATFORM STREQUAL "webgl")
     set(ENV{LDFLAGS} "")
     list(APPEND CMAKE_ARGS
         "-DCMAKE_TOOLCHAIN_FILE=$ENV{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
-        "-DCMAKE_C_FLAGS=-msimd128"
-        "-DCMAKE_CXX_FLAGS=-msimd128"
+        "-DCMAKE_C_FLAGS=-msimd128 -DBX_CONFIG_SUPPORTS_THREADING=0"
+        "-DCMAKE_CXX_FLAGS=-msimd128 -DBX_CONFIG_SUPPORTS_THREADING=0"
         "-DCMAKE_EXE_LINKER_FLAGS="
         "-DBGFX_CONFIG_MULTITHREADED=OFF"
     )
