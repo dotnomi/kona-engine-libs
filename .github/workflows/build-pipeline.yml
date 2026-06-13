@@ -110,8 +110,8 @@ jobs:
           sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           xcodebuild -showsdks
 
-      - name: Run Build SDL2
-        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-sdl2.cmake
+#      - name: Run Build SDL2
+#        run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-sdl2.cmake
 
       - name: Run Build bgfx
         run: cmake -DTARGET_PLATFORM=${{ matrix.target }} -DPREFIX=${{ github.workspace }}/build-out/${{ matrix.target }} -P scripts/build-bgfx.cmake
