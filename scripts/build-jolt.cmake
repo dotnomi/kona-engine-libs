@@ -52,6 +52,31 @@ if(NOT EXISTS "${JOLTC_DIR}")
     endif()
 endif()
 
+# Dynamically patch JoltC to make it compatible with Jolt v5.5.0
+message(STATUS "Patching JoltC for v5.5.0 compatibility...")
+
+# Patch 1: Add missing DrawSettings fields to Functions.h
+set(FUNCTIONS_H "${JOLTC_DIR}/JoltC/Functions.h")
+if(EXISTS "${FUNCTIONS_H}")
+    file(READ "${FUNCTIONS_H}" FUNC_CONTENT)
+    string(REPLACE 
+        "bool mDrawSoftBodyLRAConstraints;\n\tbool mDrawSoftBodyPredictedBounds;" 
+        "bool mDrawSoftBodyLRAConstraints;\n\tbool mDrawSoftBodyRods;\n\tbool mDrawSoftBodyRodStates;\n\tbool mDrawSoftBodyRodBendTwistConstraints;\n\tbool mDrawSoftBodyPredictedBounds;" 
+        FUNC_CONTENT_PATCHED "${FUNC_CONTENT}")
+    file(WRITE "${FUNCTIONS_H}" "${FUNC_CONTENT_PATCHED}")
+endif()
+
+# Patch 2: Fix protected constructor instantiation in JoltC.cpp
+set(JOLTC_CPP "${JOLTC_DIR}/JoltCImpl/JoltC.cpp")
+if(EXISTS "${JOLTC_CPP}")
+    file(READ "${JOLTC_CPP}" JOLTC_CONTENT)
+    string(REPLACE 
+        "JPH::ConstraintSettings defaultSettings{};\n\tJPC_ConstraintSettings_to_jpc(settings, &defaultSettings);" 
+        "settings->Enabled = true;\n\tsettings->ConstraintPriority = 0;\n\tsettings->NumVelocityStepsOverride = 0;\n\tsettings->NumPositionStepsOverride = 0;\n\tsettings->DrawConstraintSize = 1.0f;\n\tsettings->UserData = 0;" 
+        JOLTC_CONTENT_PATCHED "${JOLTC_CONTENT}")
+    file(WRITE "${JOLTC_CPP}" "${JOLTC_CONTENT_PATCHED}")
+endif()
+
 # Patch Jolt CMakeLists to include JoltC
 file(READ "${SRC_DIR}/Build/CMakeLists.txt" JOLT_CMAKE_CONTENT)
 string(FIND "${JOLT_CMAKE_CONTENT}" "Inject JoltC Wrapper" HAS_JOLTC_INJECT)
