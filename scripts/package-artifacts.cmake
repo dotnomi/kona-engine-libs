@@ -57,6 +57,12 @@ if(NOT HEADERS_COPIED)
     endif()
 endif()
 
+# Copy JoltC wrapper headers unconditionally
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/joltc/JoltC")
+    message(STATUS "Copying JoltC headers...")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/external/joltc/JoltC/" DESTINATION "${STAGE_DIR}/include/Jolt")
+endif()
+
 # 2. Copy libraries for each platform
 foreach(PLATFORM ${TARGETS})
     set(PLAT_LIB_STAGE "${STAGE_DIR}/lib/${PLATFORM}")

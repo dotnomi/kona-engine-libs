@@ -28,6 +28,27 @@ if(NOT EXISTS "${SRC_DIR}")
     endif()
 endif()
 
+# Clone JoltC repository
+set(JOLTC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/joltc")
+if(NOT EXISTS "${JOLTC_DIR}")
+    message(STATUS "Cloning JoltC...")
+    execute_process(
+        COMMAND git clone --depth 1 https://github.com/SecondHalfGames/JoltC.git ${JOLTC_DIR}
+        RESULT_VARIABLE JOLTC_GIT_RESULT
+    )
+    if(NOT JOLTC_GIT_RESULT EQUAL 0)
+        message(FATAL_ERROR "Failed to clone JoltC")
+    endif()
+endif()
+
+# Patch Jolt CMakeLists to include JoltC
+file(READ "${SRC_DIR}/Build/CMakeLists.txt" JOLT_CMAKE_CONTENT)
+string(FIND "${JOLT_CMAKE_CONTENT}" "Inject JoltC Wrapper" HAS_JOLTC_INJECT)
+if(HAS_JOLTC_INJECT EQUAL -1)
+    file(TO_CMAKE_PATH "${JOLTC_DIR}" JOLTC_CMAKE_PATH)
+    file(APPEND "${SRC_DIR}/Build/CMakeLists.txt" "\n# Inject JoltC Wrapper\ntarget_sources(Jolt PRIVATE \"${JOLTC_CMAKE_PATH}/JoltCImpl/JoltC.cpp\")\ntarget_include_directories(Jolt PUBLIC \"${JOLTC_CMAKE_PATH}\")\n")
+endif()
+
 # Jolt's CMakeLists.txt is in JoltPhysics/Build
 set(CMAKE_ARGS
     "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
