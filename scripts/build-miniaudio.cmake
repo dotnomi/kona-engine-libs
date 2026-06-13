@@ -37,9 +37,10 @@ elseif(TARGET_PLATFORM STREQUAL "macos-x64")
 elseif(TARGET_PLATFORM STREQUAL "macos-arm64")
     list(APPEND CMAKE_ARGS "-DCMAKE_OSX_ARCHITECTURES=arm64")
 elseif(TARGET_PLATFORM STREQUAL "linux-x64")
-    # Default host config
+    list(APPEND CMAKE_ARGS "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
     list(APPEND CMAKE_ARGS
+        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
         "-DCMAKE_SYSTEM_NAME=Linux"
         "-DCMAKE_SYSTEM_PROCESSOR=aarch64"
         "-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc"
@@ -61,6 +62,18 @@ elseif(TARGET_PLATFORM STREQUAL "ios")
         "-DCMAKE_SYSTEM_NAME=iOS"
         "-DCMAKE_OSX_ARCHITECTURES=arm64"
         "-DCMAKE_OSX_SYSROOT=iphoneos"
+    )
+elseif(TARGET_PLATFORM STREQUAL "ios-simulator-arm64")
+    list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=iOS"
+        "-DCMAKE_OSX_ARCHITECTURES=arm64"
+        "-DCMAKE_OSX_SYSROOT=iphonesimulator"
+    )
+elseif(TARGET_PLATFORM STREQUAL "ios-x64")
+    list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=iOS"
+        "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+        "-DCMAKE_OSX_SYSROOT=iphonesimulator"
     )
 endif()
 

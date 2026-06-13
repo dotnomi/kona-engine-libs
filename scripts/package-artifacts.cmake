@@ -21,6 +21,8 @@ set(TARGETS
     webgl
     android
     ios
+    ios-simulator-arm64
+    ios-x64
 )
 
 # 1. Copy headers from the first available build platform that has them

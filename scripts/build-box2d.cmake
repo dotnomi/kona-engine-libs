@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 
 set(LIB_NAME box2d)
 set(GIT_URL "https://github.com/erincatto/box2d.git")
-set(GIT_TAG "v2.4.1")
+set(GIT_TAG "v3.0.0")
 
 if(NOT DEFINED TARGET_PLATFORM)
     message(FATAL_ERROR "TARGET_PLATFORM not defined")
@@ -31,9 +31,9 @@ endif()
 set(CMAKE_ARGS
     "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
     "-DCMAKE_BUILD_TYPE=Release"
-    "-DBOX2D_BUILD_UNIT_TESTS=OFF"
-    "-DBOX2D_BUILD_TESTBED=OFF"
-    "-DBOX2D_BUILD_DOCS=OFF"
+    "-DBOX2D_SAMPLES=OFF"
+    "-DBOX2D_UNIT_TESTS=OFF"
+    "-DBOX2D_DOCS=OFF"
 )
 
 if(TARGET_PLATFORM STREQUAL "windows-x64")
@@ -45,9 +45,10 @@ elseif(TARGET_PLATFORM STREQUAL "macos-x64")
 elseif(TARGET_PLATFORM STREQUAL "macos-arm64")
     list(APPEND CMAKE_ARGS "-DCMAKE_OSX_ARCHITECTURES=arm64")
 elseif(TARGET_PLATFORM STREQUAL "linux-x64")
-    # Default host config
+    list(APPEND CMAKE_ARGS "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 elseif(TARGET_PLATFORM STREQUAL "linux-arm64")
     list(APPEND CMAKE_ARGS
+        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
         "-DCMAKE_SYSTEM_NAME=Linux"
         "-DCMAKE_SYSTEM_PROCESSOR=aarch64"
         "-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc"
@@ -69,6 +70,18 @@ elseif(TARGET_PLATFORM STREQUAL "ios")
         "-DCMAKE_SYSTEM_NAME=iOS"
         "-DCMAKE_OSX_ARCHITECTURES=arm64"
         "-DCMAKE_OSX_SYSROOT=iphoneos"
+    )
+elseif(TARGET_PLATFORM STREQUAL "ios-simulator-arm64")
+    list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=iOS"
+        "-DCMAKE_OSX_ARCHITECTURES=arm64"
+        "-DCMAKE_OSX_SYSROOT=iphonesimulator"
+    )
+elseif(TARGET_PLATFORM STREQUAL "ios-x64")
+    list(APPEND CMAKE_ARGS
+        "-DCMAKE_SYSTEM_NAME=iOS"
+        "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+        "-DCMAKE_OSX_SYSROOT=iphonesimulator"
     )
 endif()
 
