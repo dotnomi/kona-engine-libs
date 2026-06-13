@@ -185,4 +185,8 @@ if(NOT INST_RESULT EQUAL 0)
     message(FATAL_ERROR "Install failed for ${LIB_NAME}")
 endif()
 
+# Manually install JoltC headers to the prefix so they get packaged
+message(STATUS "Installing JoltC headers...")
+file(COPY "${JOLTC_DIR}/JoltC/" DESTINATION "${PREFIX}/include/JoltC")
+
 message(STATUS "${LIB_NAME} successfully built and installed to ${PREFIX}")
